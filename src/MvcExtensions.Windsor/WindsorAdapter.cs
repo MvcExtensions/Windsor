@@ -19,7 +19,7 @@ namespace MvcExtensions.Windsor
     using Castle.Windsor;
 
     /// <summary>
-    /// Defines an adapter class which with backed by Windsor <seealso cref="IWindsorContainer">Container</seealso>.
+    /// Defines an adapter class which is backed by Windsor <seealso cref="IWindsorContainer">Container</seealso>.
     /// </summary>
     public class WindsorAdapter : ServiceLocatorImplBase, IServiceRegistrar, IServiceInjector, IDisposable
     {
