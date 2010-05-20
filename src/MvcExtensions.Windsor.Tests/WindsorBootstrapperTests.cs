@@ -16,14 +16,14 @@ namespace MvcExtensions.Windsor.Tests
     public class WindsorBootstrapperTests
     {
         [Fact]
-        public void Should_be_able_to_create_service_locator()
+        public void Should_be_able_to_create_adapter()
         {
             var buildManager = new Mock<IBuildManager>();
             buildManager.SetupGet(bm => bm.Assemblies).Returns(new[] { GetType().Assembly });
 
             var bootstrapper = new WindsorBootstrapper(buildManager.Object);
 
-            Assert.IsType<WindsorAdapter>(bootstrapper.ServiceLocator);
+            Assert.IsType<WindsorAdapter>(bootstrapper.Adapter);
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace MvcExtensions.Windsor.Tests
 
             DummyInstaller.Installed = true;
 
-            Assert.IsType<WindsorAdapter>(bootstrapper.ServiceLocator);
+            Assert.IsType<WindsorAdapter>(bootstrapper.Adapter);
 
             Assert.True(DummyInstaller.Installed);
         }

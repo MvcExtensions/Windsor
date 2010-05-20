@@ -19,7 +19,7 @@ namespace MvcExtensions.Windsor.Tests
     public class WindsorAdapterTests
     {
         private readonly Mock<IWindsorContainer> container;
-        private WindsorAdapter adapter;
+        private readonly WindsorAdapter adapter;
 
         public WindsorAdapterTests()
         {
@@ -35,15 +35,6 @@ namespace MvcExtensions.Windsor.Tests
             adapter.Dispose();
 
             container.VerifyAll();
-        }
-
-        [Fact]
-        public void Should_finalize()
-        {
-            adapter = null;
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
         }
 
         [Theory]

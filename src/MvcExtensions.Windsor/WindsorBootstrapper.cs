@@ -11,8 +11,6 @@ namespace MvcExtensions.Windsor
     using System.Linq;
     using System.Web;
 
-    using Microsoft.Practices.ServiceLocation;
-
     using Castle.Windsor;
     using Castle.MicroKernel.Registration;
     using Castle.MicroKernel.Resolvers.SpecializedResolvers;
@@ -34,10 +32,10 @@ namespace MvcExtensions.Windsor
         }
 
         /// <summary>
-        /// Creates the service locator.
+        /// Creates the container adapter.
         /// </summary>
         /// <returns></returns>
-        protected override IServiceLocator CreateServiceLocator()
+        protected override ContainerAdapter CreateAdapter()
         {
             IWindsorContainer container = new WindsorContainer();
 
@@ -56,7 +54,7 @@ namespace MvcExtensions.Windsor
         /// </summary>
         protected override void LoadModules()
         {
-            IWindsorContainer container = ((WindsorAdapter)ServiceLocator).Container;
+            IWindsorContainer container = ((WindsorAdapter)Adapter).Container;
 
             BuildManager.ConcreteTypes
                         .Where(type => installerType.IsAssignableFrom(type) && type.HasDefaultConstructor())

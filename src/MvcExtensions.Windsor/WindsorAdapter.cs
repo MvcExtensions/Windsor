@@ -9,11 +9,8 @@ namespace MvcExtensions.Windsor
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
-
-    using Microsoft.Practices.ServiceLocation;
 
     using Castle.Core;
     using Castle.Windsor;
@@ -21,12 +18,10 @@ namespace MvcExtensions.Windsor
     /// <summary>
     /// Defines an adapter class which is backed by Windsor <seealso cref="IWindsorContainer">Container</seealso>.
     /// </summary>
-    public class WindsorAdapter : ServiceLocatorImplBase, IServiceRegistrar, IServiceInjector, IDisposable
+    public class WindsorAdapter : ContainerAdapter
     {
         private static readonly Dictionary<RuntimeTypeHandle, IEnumerable<PropertyInfo>> propertyCache = new Dictionary<RuntimeTypeHandle, IEnumerable<PropertyInfo>>();
         private static readonly object propertyCacheLock = new object();
-
-        private bool disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindsorAdapter"/> class.
@@ -40,16 +35,6 @@ namespace MvcExtensions.Windsor
         }
 
         /// <summary>
-        /// Releases unmanaged resources and performs other cleanup operations before the
-        /// <see cref="WindsorAdapter"/> is reclaimed by garbage collection.
-        /// </summary>
-        [DebuggerStepThrough]
-        ~WindsorAdapter()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
         /// Gets the container.
         /// </summary>
         /// <value>The container.</value>
@@ -60,16 +45,6 @@ namespace MvcExtensions.Windsor
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        [DebuggerStepThrough]
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
         /// Registers the type.
         /// </summary>
         /// <param name="key">The key.</param>
@@ -77,7 +52,7 @@ namespace MvcExtensions.Windsor
         /// <param name="implementationType">Type of the implementation.</param>
         /// <param name="lifetime">The lifetime of the service.</param>
         /// <returns></returns>
-        public virtual IServiceRegistrar RegisterType(string key, Type serviceType, Type implementationType, LifetimeType lifetime)
+        public override IServiceRegistrar RegisterType(string key, Type serviceType, Type implementationType, LifetimeType lifetime)
         {
             Invariant.IsNotNull(serviceType, "serviceType");
             Invariant.IsNotNull(implementationType, "implementationType");
@@ -102,7 +77,7 @@ namespace MvcExtensions.Windsor
         /// <param name="serviceType">Type of the service.</param>
         /// <param name="instance">The instance.</param>
         /// <returns></returns>
-        public virtual IServiceRegistrar RegisterInstance(string key, Type serviceType, object instance)
+        public override IServiceRegistrar RegisterInstance(string key, Type serviceType, object instance)
         {
             Invariant.IsNotNull(serviceType, "serviceType");
             Invariant.IsNotNull(instance, "instance");
@@ -118,7 +93,7 @@ namespace MvcExtensions.Windsor
         /// Injects the matching dependences.
         /// </summary>
         /// <param name="instance">The instance.</param>
-        public virtual void Inject(object instance)
+        public override void Inject(object instance)
         {
             if (instance != null)
             {
@@ -150,16 +125,9 @@ namespace MvcExtensions.Windsor
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources
         /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        [DebuggerStepThrough]
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposed && disposing)
-            {
-                Container.Dispose();
-            }
-
-            disposed = true;
+            Container.Dispose();
         }
 
         private static IEnumerable<PropertyInfo> GetProperties(Type type, IWindsorContainer container)
