@@ -58,7 +58,7 @@ namespace MvcExtensions.Windsor
 
             BuildManager.ConcreteTypes
                         .Where(type => installerType.IsAssignableFrom(type) && type.HasDefaultConstructor())
-                        .Select(type => Activator.CreateInstance(type))
+                        .Select(Activator.CreateInstance)
                         .Cast<IWindsorInstaller>()
                         .Each(installer => installer.Install(container, null));
         }
