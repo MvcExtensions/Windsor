@@ -8,6 +8,7 @@
 namespace MvcExtensions.Windsor.Tests
 {
     using System;
+    using System.Web.Mvc;
 
     using Castle.Core;
     using Castle.Windsor;
