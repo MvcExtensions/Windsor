@@ -13,6 +13,7 @@ namespace MvcExtensions.Windsor
     using System.Reflection;
 
     using Castle.Core;
+    using Castle.MicroKernel.Registration;
     using Castle.Windsor;
 
     /// <summary>
@@ -65,7 +66,7 @@ namespace MvcExtensions.Windsor
                                       LifestyleType.Singleton :
                                       LifestyleType.Transient);
 
-            Container.AddComponentLifeStyle(key, serviceType, implementationType, lifestyle);
+            Container.Register(Component.For(serviceType).ImplementedBy(implementationType).Named(key).LifeStyle.Is(lifestyle));
 
             return this;
         }
@@ -84,7 +85,7 @@ namespace MvcExtensions.Windsor
 
             key = key ?? MakeKey(serviceType, instance.GetType());
 
-            Container.Kernel.AddComponentInstance(key, serviceType, instance);
+            Container.Register(Component.For(serviceType).Named(key).Instance(instance));
 
             return this;
         }

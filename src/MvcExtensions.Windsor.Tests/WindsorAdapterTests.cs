@@ -10,7 +10,7 @@ namespace MvcExtensions.Windsor.Tests
     using System;
     using System.Web.Mvc;
 
-    using Castle.Core;
+    using Castle.MicroKernel.Registration;
     using Castle.Windsor;
 
     using Moq;
@@ -44,13 +44,7 @@ namespace MvcExtensions.Windsor.Tests
         [InlineData(LifetimeType.Transient, "")]
         public void Should_be_able_to_register_type(LifetimeType lifetime, string key)
         {
-            LifestyleType lifestyle = (lifetime == LifetimeType.PerRequest) ?
-                                      LifestyleType.PerWebRequest :
-                                      ((lifetime == LifetimeType.Singleton) ?
-                                      LifestyleType.Singleton :
-                                      LifestyleType.Transient);
-
-            container.Setup(c => c.AddComponentLifeStyle(It.IsAny<string>(), It.IsAny<Type>(), It.IsAny<Type>(), lifestyle)).Verifiable();
+            container.Setup(c => c.Register(It.IsAny<IRegistration[]>())).Verifiable();
 
             adapter.RegisterType(key, typeof(DummyObject), typeof(DummyObject), lifetime);
 
@@ -60,7 +54,7 @@ namespace MvcExtensions.Windsor.Tests
         [Fact]
         public void Should_be_able_to_register_instance()
         {
-            container.Setup(c => c.Kernel.AddComponentInstance(It.IsAny<string>(), It.IsAny<Type>(), It.IsAny<object>())).Verifiable();
+            container.Setup(c => c.Register(It.IsAny<IRegistration[]>())).Verifiable();
 
             adapter.RegisterInstance("foo", typeof(DummyObject), new DummyObject());
 

@@ -7,7 +7,8 @@
 
 namespace MvcExtensions.Windsor.Tests
 {
-    using Castle.MicroKernel;
+    using Castle.MicroKernel.Registration;
+    using Castle.MicroKernel.SubSystems.Configuration;
     using Castle.Windsor;
 
     using Moq;
