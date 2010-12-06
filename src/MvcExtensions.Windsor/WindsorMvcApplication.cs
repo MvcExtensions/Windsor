@@ -30,7 +30,7 @@ namespace MvcExtensions.Windsor
         /// <returns></returns>
         protected override IBootstrapper CreateBootstrapper()
         {
-            return new WindsorBootstrapper(BuildManagerWrapper.Current);
+            return new WindsorBootstrapper(BuildManagerWrapper.Current, BootstrapperTasksRegistry.Current, PerRequestTasksRegistry.Current);
         }
     }
 }

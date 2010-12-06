@@ -22,7 +22,7 @@ namespace MvcExtensions.Windsor.Tests
             var buildManager = new Mock<IBuildManager>();
             buildManager.SetupGet(bm => bm.Assemblies).Returns(new[] { GetType().Assembly });
 
-            var bootstrapper = new WindsorBootstrapper(buildManager.Object);
+            var bootstrapper = new WindsorBootstrapper(buildManager.Object, new Mock<IBootstrapperTasksRegistry>().Object, new Mock<IPerRequestTasksRegistry>().Object);
 
             Assert.IsType<WindsorAdapter>(bootstrapper.Adapter);
         }
@@ -33,7 +33,7 @@ namespace MvcExtensions.Windsor.Tests
             var buildManager = new Mock<IBuildManager>();
             buildManager.SetupGet(bm => bm.ConcreteTypes).Returns(new[] { typeof(DummyInstaller) });
 
-            var bootstrapper = new WindsorBootstrapper(buildManager.Object);
+            var bootstrapper = new WindsorBootstrapper(buildManager.Object, new Mock<IBootstrapperTasksRegistry>().Object, new Mock<IPerRequestTasksRegistry>().Object);
 
             DummyInstaller.Installed = true;
 
