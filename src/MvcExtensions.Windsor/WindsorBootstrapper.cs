@@ -12,6 +12,7 @@ namespace MvcExtensions.Windsor
     using System.Web;
 
     using Castle.Windsor;
+    using Castle.MicroKernel.Releasers;
     using Castle.MicroKernel.Registration;
     using Castle.MicroKernel.Resolvers.SpecializedResolvers;
     using Castle.Facilities.FactorySupport;
@@ -40,6 +41,9 @@ namespace MvcExtensions.Windsor
         protected override ContainerAdapter CreateAdapter()
         {
             IWindsorContainer container = new WindsorContainer();
+
+            //we don't want to allow windsor to track mvc infrastructure stuff, sorry for this:(
+            container.Kernel.ReleasePolicy = new NoTrackingReleasePolicy();
 
             container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
             container.AddFacility<FactorySupportFacility>();
