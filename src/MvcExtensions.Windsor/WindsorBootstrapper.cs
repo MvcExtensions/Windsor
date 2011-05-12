@@ -62,11 +62,13 @@ namespace MvcExtensions.Windsor
         {
             IWindsorContainer container = ((WindsorAdapter)Adapter).Container;
 
-            BuildManager.ConcreteTypes
-                        .Where(type => installerType.IsAssignableFrom(type) && type.HasDefaultConstructor())
-                        .Select(Activator.CreateInstance)
-                        .Cast<IWindsorInstaller>()
-                        .Each(installer => installer.Install(container, null));
+            IWindsorInstaller[] windsorInstallers = BuildManager.ConcreteTypes
+                .Where(type => installerType.IsAssignableFrom(type) && type.HasDefaultConstructor())
+                .Select(Activator.CreateInstance)
+                .Cast<IWindsorInstaller>()
+                .ToArray();
+
+            container.Install(windsorInstallers);
         }
     }
 }
