@@ -10,12 +10,11 @@ namespace MvcExtensions.Windsor
     using System;
     using System.Linq;
     using System.Web;
-
-    using Castle.Windsor;
-    using Castle.MicroKernel.Releasers;
-    using Castle.MicroKernel.Registration;
-    using Castle.MicroKernel.Resolvers.SpecializedResolvers;
     using Castle.Facilities.FactorySupport;
+    using Castle.MicroKernel.Registration;
+    using Castle.MicroKernel.Releasers;
+    using Castle.MicroKernel.Resolvers.SpecializedResolvers;
+    using Castle.Windsor;
 
     /// <summary>
     /// Defines a <seealso cref="Bootstrapper">Bootstrapper</seealso> which is backed by <seealso cref="WindsorAdapter"/>.
@@ -42,7 +41,7 @@ namespace MvcExtensions.Windsor
         {
             IWindsorContainer container = new WindsorContainer();
 
-            //we don't want to allow windsor to track mvc infrastructure stuff, sorry for this:(
+            // we don't want to allow windsor to track mvc infrastructure stuff, sorry for this:(
             container.Kernel.ReleasePolicy = new NoTrackingReleasePolicy();
 
             container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
@@ -50,7 +49,7 @@ namespace MvcExtensions.Windsor
 
             container.Register(Component.For<HttpContextBase>().LifeStyle.Transient.UsingFactoryMethod(() => new HttpContextWrapper(HttpContext.Current)));
 
-            WindsorAdapter adapter = new WindsorAdapter(container);
+            var adapter = new WindsorAdapter(container);
 
             return adapter;
         }
