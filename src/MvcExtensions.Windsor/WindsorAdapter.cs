@@ -28,11 +28,13 @@ namespace MvcExtensions.Windsor
         /// Initializes a new instance of the <see cref="WindsorAdapter"/> class.
         /// </summary>
         /// <param name="container">The container.</param>
-        public WindsorAdapter(IWindsorContainer container)
+        /// <param name="parent">The parent container.</param>
+        public WindsorAdapter(IWindsorContainer container, IWindsorContainer parent)
         {
             Invariant.IsNotNull(container, "container");
 
             Container = container;
+            Parent = parent;
         }
 
         /// <summary>
@@ -40,6 +42,15 @@ namespace MvcExtensions.Windsor
         /// </summary>
         /// <value>The container.</value>
         public IWindsorContainer Container
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets the parent container.
+        /// </summary>
+        public IWindsorContainer Parent
         {
             get;
             private set;
@@ -86,7 +97,7 @@ namespace MvcExtensions.Windsor
             key = key ?? MakeKey(serviceType, instance.GetType());
 
             Container.Register(Component.For(serviceType).Named(key).Instance(instance));
-
+            
             return this;
         }
 

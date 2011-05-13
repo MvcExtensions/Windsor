@@ -47,9 +47,14 @@ namespace MvcExtensions.Windsor
             container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
             container.AddFacility<FactorySupportFacility>();
 
+            var parent = new WindsorContainer();
+            parent.Kernel.Resolver.AddSubResolver(new ArrayResolver(parent.Kernel));
+            parent.AddFacility<FactorySupportFacility>();
+            parent.AddChildContainer(container);
+
             container.Register(Component.For<HttpContextBase>().LifeStyle.Transient.UsingFactoryMethod(() => new HttpContextWrapper(HttpContext.Current)));
 
-            var adapter = new WindsorAdapter(container);
+            var adapter = new WindsorAdapter(container, parent);
 
             return adapter;
         }
@@ -59,7 +64,7 @@ namespace MvcExtensions.Windsor
         /// </summary>
         protected override void LoadModules()
         {
-            IWindsorContainer container = ((WindsorAdapter)Adapter).Container;
+            var parent = ((WindsorAdapter)Adapter).Parent;
 
             IWindsorInstaller[] windsorInstallers = BuildManager.ConcreteTypes
                 .Where(type => installerType.IsAssignableFrom(type) && type.HasDefaultConstructor())
@@ -67,7 +72,7 @@ namespace MvcExtensions.Windsor
                 .Cast<IWindsorInstaller>()
                 .ToArray();
 
-            container.Install(windsorInstallers);
+            parent.Install(windsorInstallers);
         }
     }
 }

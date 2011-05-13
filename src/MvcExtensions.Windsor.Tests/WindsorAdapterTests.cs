@@ -25,7 +25,7 @@ namespace MvcExtensions.Windsor.Tests
         public WindsorAdapterTests()
         {
             container = new Mock<IWindsorContainer>();
-            adapter = new WindsorAdapter(container.Object);
+            adapter = new WindsorAdapter(container.Object, container.Object);
         }
 
         [Fact]
