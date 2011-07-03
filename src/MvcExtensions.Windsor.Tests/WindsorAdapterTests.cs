@@ -66,12 +66,12 @@ namespace MvcExtensions.Windsor.Tests
         {
             var dummy = new DummyObject2();
 
-            container.Setup(c => c.Kernel.HasComponent(typeof(DummyObject))).Returns(true);
-            container.Setup(c => c.Resolve(typeof(DummyObject))).Returns(new DummyObject());
+            container.Setup(c => c.Kernel.HasComponent(typeof(DummyObject))).Returns(true).Verifiable();
+            container.Setup(c => c.Resolve(typeof(DummyObject))).Returns(new DummyObject()).Verifiable();
 
             adapter.Inject(dummy);
 
-            container.VerifyAll();
+            container.Verify();
         }
 
         [Fact]
