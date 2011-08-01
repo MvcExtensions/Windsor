@@ -9,6 +9,7 @@ namespace MvcExtensions.Windsor
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Reflection;
 
@@ -185,7 +186,7 @@ namespace MvcExtensions.Windsor
 
         private static string MakeKey(Type serviceType, Type implementationType)
         {
-            return string.Format("{0}->{1}", serviceType.FullName, implementationType.FullName);
+            return string.Format(CultureInfo.InvariantCulture, "{0}->{1}", serviceType.FullName, implementationType.FullName);
         }
     }
 }
