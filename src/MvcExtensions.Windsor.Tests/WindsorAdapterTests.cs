@@ -31,11 +31,9 @@ namespace MvcExtensions.Windsor.Tests
         [Fact]
         public void Dispose_should_also_dispose_container()
         {
-            container.Setup(c => c.Dispose());
-
             adapter.Dispose();
 
-            container.VerifyAll();
+            container.Verify(c => c.Dispose());
         }
 
         [Theory]
@@ -87,7 +85,7 @@ namespace MvcExtensions.Windsor.Tests
         [Fact]
         public void Should_be_able_to_get_service_by_type_and_key()
         {
-            container.Setup(c => c.Resolve(It.IsAny<Type>(), It.IsAny<string>()));
+            container.Setup(c => c.Resolve(It.IsAny<string>(), It.IsAny<Type>()));
 
             adapter.GetService<DummyObject>("foo");
 

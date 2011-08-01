@@ -121,7 +121,7 @@ namespace MvcExtensions.Windsor
         /// <returns></returns>
         protected override object DoGetService(Type serviceType, string key)
         {
-            return string.IsNullOrEmpty(key) ? Container.Resolve(serviceType) : Container.Resolve(serviceType, key);
+            return string.IsNullOrEmpty(key) ? Container.Resolve(serviceType) : Container.Resolve(key, serviceType);
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace MvcExtensions.Windsor
 
         private static string MakeKey(Type serviceType, Type implementationType)
         {
-            return serviceType.FullName + "->" + implementationType.FullName;
+            return string.Format("{0}->{1}", serviceType.FullName, implementationType.FullName);
         }
     }
 }
