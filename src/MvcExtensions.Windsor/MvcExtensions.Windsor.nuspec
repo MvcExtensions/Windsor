@@ -15,6 +15,7 @@
   </metadata>
   <files>
     <file src="MvcExtensions.Windsor.dll" target="lib\net40\MvcExtensions.Windsor.dll" />
+    <file src="MvcExtensions.Windsor.pdb" target="lib\net40\MvcExtensions.Windsor.pdb" />
     <file src="MvcExtensions.Windsor.xml" target="lib\net40\MvcExtensions.Windsor.xml" />
   </files>
 </package>
