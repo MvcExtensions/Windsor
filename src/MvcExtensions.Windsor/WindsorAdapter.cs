@@ -12,7 +12,6 @@ namespace MvcExtensions.Windsor
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
-
     using Castle.Core;
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
@@ -24,18 +23,17 @@ namespace MvcExtensions.Windsor
     {
         private static readonly Dictionary<RuntimeTypeHandle, IEnumerable<PropertyInfo>> propertyCache = new Dictionary<RuntimeTypeHandle, IEnumerable<PropertyInfo>>();
         private static readonly object propertyCacheLock = new object();
+        private readonly ICollection<object> injectedServices = new HashSet<object>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindsorAdapter"/> class.
         /// </summary>
         /// <param name="container">The container.</param>
-        /// <param name="parent">The parent container.</param>
-        public WindsorAdapter(IWindsorContainer container, IWindsorContainer parent)
+        public WindsorAdapter(IWindsorContainer container)
         {
             Invariant.IsNotNull(container, "container");
 
             Container = container;
-            Parent = parent;
         }
 
         /// <summary>
@@ -46,15 +44,6 @@ namespace MvcExtensions.Windsor
         {
             get;
             set;
-        }
-
-        /// <summary>
-        /// Gets the parent container.
-        /// </summary>
-        public IWindsorContainer Parent
-        {
-            get;
-            private set;
         }
 
         /// <summary>
@@ -72,11 +61,11 @@ namespace MvcExtensions.Windsor
 
             key = key ?? MakeKey(serviceType, implementationType);
 
-            LifestyleType lifestyle = (lifetime == LifetimeType.PerRequest) ?
-                                      LifestyleType.PerWebRequest :
-                                      ((lifetime == LifetimeType.Singleton) ?
-                                      LifestyleType.Singleton :
-                                      LifestyleType.Transient);
+            LifestyleType lifestyle = (lifetime == LifetimeType.PerRequest)
+                                          ? LifestyleType.PerWebRequest
+                                          : ((lifetime == LifetimeType.Singleton)
+                                                 ? LifestyleType.Singleton
+                                                 : LifestyleType.Transient);
 
             Container.Register(Component.For(serviceType).ImplementedBy(implementationType).Named(key).LifeStyle.Is(lifestyle));
 
@@ -98,7 +87,7 @@ namespace MvcExtensions.Windsor
             key = key ?? MakeKey(serviceType, instance.GetType());
 
             Container.Register(Component.For(serviceType).Named(key).Instance(instance));
-            
+
             return this;
         }
 
@@ -110,7 +99,22 @@ namespace MvcExtensions.Windsor
         {
             if (instance != null)
             {
-                GetProperties(instance.GetType(), Container).Each(property => property.SetValue(instance, Container.Resolve(property.PropertyType), null));
+                GetProperties(instance.GetType(), Container)
+                    .Each(property =>
+                              {
+                                  var dependency = Container.Resolve(property.PropertyType);
+                                  injectedServices.Add(dependency);
+                                  property.SetValue(instance, dependency, null);
+                              });
+            }
+        }
+
+        internal void ReleaseAllInjectedServices()
+        {
+            foreach (var service in injectedServices.ToList())
+            {
+                injectedServices.Remove(service);
+                Container.Release(service);
             }
         }
 
@@ -155,26 +159,26 @@ namespace MvcExtensions.Windsor
                     if (!propertyCache.TryGetValue(typeHandle, out properties))
                     {
                         Func<PropertyInfo, bool> filter = property =>
+                                                              {
+                                                                  if (property.CanWrite)
                                                                   {
-                                                                      if (property.CanWrite)
-                                                                      {
-                                                                          MethodInfo setMethod = property.GetSetMethod();
+                                                                      MethodInfo setMethod = property.GetSetMethod();
 
-                                                                          if ((setMethod != null) && (setMethod.GetParameters().Length == 1))
+                                                                      if ((setMethod != null) && (setMethod.GetParameters().Length == 1))
+                                                                      {
+                                                                          if (container.Kernel.HasComponent(property.PropertyType))
                                                                           {
-                                                                              if (container.Kernel.HasComponent(property.PropertyType))
-                                                                              {
-                                                                                  return true;
-                                                                              }
+                                                                              return true;
                                                                           }
                                                                       }
+                                                                  }
 
-                                                                      return false;
-                                                                  };
+                                                                  return false;
+                                                              };
 
                         properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty)
-                                         .Where(filter)
-                                         .ToList();
+                            .Where(filter)
+                            .ToList();
 
                         propertyCache.Add(typeHandle, properties);
                     }

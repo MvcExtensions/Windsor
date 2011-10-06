@@ -22,6 +22,7 @@ namespace MvcExtensions.Windsor
         public WindsorMvcApplication()
         {
             new PerWebRequestLifestyleModule().Init(this);
+            EndRequest += (sender, args) => ((WindsorAdapter)Adapter).ReleaseAllInjectedServices(); 
         }
 
         /// <summary>

@@ -10,9 +10,9 @@ namespace MvcExtensions.Windsor
     using System;
     using System.Linq;
     using System.Web;
+    using System.Web.Mvc;
     using Castle.Facilities.FactorySupport;
     using Castle.MicroKernel.Registration;
-    using Castle.MicroKernel.Releasers;
     using Castle.MicroKernel.Resolvers.SpecializedResolvers;
     using Castle.Windsor;
 
@@ -39,22 +39,14 @@ namespace MvcExtensions.Windsor
         /// <returns></returns>
         protected override ContainerAdapter CreateAdapter()
         {
-            IWindsorContainer container = new WindsorContainer();
-
-            // we don't want to allow windsor to track mvc infrastructure stuff, sorry for this:(
-            container.Kernel.ReleasePolicy = new NoTrackingReleasePolicy();
-
+            var container = new WindsorContainer();
             container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel));
             container.AddFacility<FactorySupportFacility>();
 
-            var parent = new WindsorContainer();
-            parent.Kernel.Resolver.AddSubResolver(new ArrayResolver(parent.Kernel));
-            parent.AddFacility<FactorySupportFacility>();
-            parent.AddChildContainer(container);
-
             container.Register(Component.For<HttpContextBase>().LifeStyle.Transient.UsingFactoryMethod(() => new HttpContextWrapper(HttpContext.Current)));
+            container.Register(Component.For<IControllerFactory>().LifeStyle.Singleton.ImplementedBy<WindsorControllerFactory>());
 
-            var adapter = new WindsorAdapter(container, parent);
+            var adapter = new WindsorAdapter(container);
 
             return adapter;
         }
@@ -64,7 +56,7 @@ namespace MvcExtensions.Windsor
         /// </summary>
         protected override void LoadModules()
         {
-            var parent = ((WindsorAdapter)Adapter).Parent;
+            IWindsorContainer parent = ((WindsorAdapter)Adapter).Container;
 
             IWindsorInstaller[] windsorInstallers = BuildManager.ConcreteTypes
                 .Where(type => installerType.IsAssignableFrom(type) && type.HasDefaultConstructor())
