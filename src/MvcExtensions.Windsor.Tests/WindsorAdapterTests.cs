@@ -83,16 +83,6 @@ namespace MvcExtensions.Windsor.Tests
         }
 
         [Fact]
-        public void Should_be_able_to_get_service_by_type_and_key()
-        {
-            container.Setup(c => c.Resolve(It.IsAny<string>(), It.IsAny<Type>()));
-
-            adapter.GetService<DummyObject>("foo");
-
-            container.VerifyAll();
-        }
-
-        [Fact]
         public void Should_be_able_to_get_all_instances()
         {
             container.Setup(c => c.ResolveAll(It.IsAny<Type>())).Returns(new DummyObject[] { });
