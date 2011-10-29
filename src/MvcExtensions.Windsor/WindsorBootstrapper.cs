@@ -56,7 +56,7 @@ namespace MvcExtensions.Windsor
         /// </summary>
         protected override void LoadModules()
         {
-            IWindsorContainer parent = ((WindsorAdapter)Adapter).Container;
+            IWindsorContainer container = ((WindsorAdapter)Adapter).Container;
 
             IWindsorInstaller[] windsorInstallers = BuildManager.ConcreteTypes
                 .Where(type => installerType.IsAssignableFrom(type) && type.HasDefaultConstructor())
@@ -64,7 +64,7 @@ namespace MvcExtensions.Windsor
                 .Cast<IWindsorInstaller>()
                 .ToArray();
 
-            parent.Install(windsorInstallers);
+            container.Install(windsorInstallers);
         }
     }
 }

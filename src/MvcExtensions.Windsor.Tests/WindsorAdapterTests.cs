@@ -75,11 +75,12 @@ namespace MvcExtensions.Windsor.Tests
         [Fact]
         public void Should_be_able_to_get_service_by_type()
         {
-            container.Setup(c => c.Resolve(It.IsAny<Type>()));
+            container.Setup(x => x.Kernel.HasComponent(typeof(DummyObject))).Returns(true).Verifiable();
+            container.Setup(c => c.Resolve(It.IsAny<Type>())).Verifiable();
 
             adapter.GetService<DummyObject>();
 
-            container.VerifyAll();
+            container.Verify();
         }
 
         [Fact]
