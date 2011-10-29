@@ -37,14 +37,14 @@ namespace MvcExtensions.Windsor.Tests
         }
 
         [Theory]
-        [InlineData(LifetimeType.PerRequest, "foo")]
-        [InlineData(LifetimeType.Singleton, null)]
-        [InlineData(LifetimeType.Transient, "")]
-        public void Should_be_able_to_register_type(LifetimeType lifetime, string key)
+        [InlineData(LifetimeType.PerRequest)]
+        [InlineData(LifetimeType.Singleton)]
+        [InlineData(LifetimeType.Transient)]
+        public void Should_be_able_to_register_type(LifetimeType lifetime)
         {
             container.Setup(c => c.Register(It.IsAny<IRegistration[]>())).Verifiable();
 
-            adapter.RegisterType(key, typeof(DummyObject), typeof(DummyObject), lifetime);
+            adapter.RegisterType(typeof(DummyObject), typeof(DummyObject), lifetime);
 
             container.Verify();
         }
@@ -54,7 +54,7 @@ namespace MvcExtensions.Windsor.Tests
         {
             container.Setup(c => c.Register(It.IsAny<IRegistration[]>())).Verifiable();
 
-            adapter.RegisterInstance("foo", typeof(DummyObject), new DummyObject());
+            adapter.RegisterInstance(typeof(DummyObject), new DummyObject());
 
             container.Verify();
         }

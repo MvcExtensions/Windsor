@@ -40,32 +40,34 @@ namespace MvcExtensions.Windsor
         /// Gets the container.
         /// </summary>
         /// <value>The container.</value>
-        public IWindsorContainer Container
-        {
-            get;
-            set;
-        }
+        public IWindsorContainer Container { get; private set; }
 
         /// <summary>
         /// Registers the type.
         /// </summary>
-        /// <param name="key">The key.</param>
         /// <param name="serviceType">Type of the service.</param>
         /// <param name="implementationType">Type of the implementation.</param>
         /// <param name="lifetime">The lifetime of the service.</param>
         /// <returns></returns>
-        public override IServiceRegistrar RegisterType(string key, Type serviceType, Type implementationType, LifetimeType lifetime)
+        public override IServiceRegistrar RegisterType(Type serviceType, Type implementationType, LifetimeType lifetime)
         {
             Invariant.IsNotNull(serviceType, "serviceType");
             Invariant.IsNotNull(implementationType, "implementationType");
 
-            key = key ?? MakeKey(serviceType, implementationType);
-
-            LifestyleType lifestyle = (lifetime == LifetimeType.PerRequest)
-                                          ? LifestyleType.PerWebRequest
-                                          : ((lifetime == LifetimeType.Singleton)
-                                                 ? LifestyleType.Singleton
-                                                 : LifestyleType.Transient);
+            var key = MakeKey(serviceType, implementationType);
+            LifestyleType lifestyle;
+            switch (lifetime)
+            {
+                case LifetimeType.PerRequest:
+                    lifestyle = LifestyleType.PerWebRequest;
+                    break;
+                case LifetimeType.Singleton:
+                    lifestyle = LifestyleType.Singleton;
+                    break;
+                default:
+                    lifestyle = LifestyleType.Transient;
+                    break;
+            }
 
             Container.Register(Component.For(serviceType).ImplementedBy(implementationType).Named(key).LifeStyle.Is(lifestyle));
 
@@ -75,16 +77,15 @@ namespace MvcExtensions.Windsor
         /// <summary>
         /// Registers the instance.
         /// </summary>
-        /// <param name="key">The key.</param>
         /// <param name="serviceType">Type of the service.</param>
         /// <param name="instance">The instance.</param>
         /// <returns></returns>
-        public override IServiceRegistrar RegisterInstance(string key, Type serviceType, object instance)
+        public override IServiceRegistrar RegisterInstance(Type serviceType, object instance)
         {
             Invariant.IsNotNull(serviceType, "serviceType");
             Invariant.IsNotNull(instance, "instance");
 
-            key = key ?? MakeKey(serviceType, instance.GetType());
+            var key = MakeKey(serviceType, instance.GetType());
 
             Container.Register(Component.For(serviceType).Named(key).Instance(instance));
 
@@ -122,11 +123,10 @@ namespace MvcExtensions.Windsor
         /// Gets the service.
         /// </summary>
         /// <param name="serviceType">Type of the service.</param>
-        /// <param name="key">The key.</param>
         /// <returns></returns>
-        protected override object DoGetService(Type serviceType, string key)
+        protected override object DoGetService(Type serviceType)
         {
-            return string.IsNullOrEmpty(key) ? Container.Resolve(serviceType) : Container.Resolve(key, serviceType);
+            return Container.Resolve(serviceType);
         }
 
         /// <summary>
