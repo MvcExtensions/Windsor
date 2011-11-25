@@ -12,6 +12,7 @@ namespace MvcExtensions.Windsor
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
+    using System.Web;
     using Castle.Core;
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
@@ -23,7 +24,6 @@ namespace MvcExtensions.Windsor
     {
         private static readonly Dictionary<RuntimeTypeHandle, IEnumerable<PropertyInfo>> propertyCache = new Dictionary<RuntimeTypeHandle, IEnumerable<PropertyInfo>>();
         private static readonly object propertyCacheLock = new object();
-        private readonly ICollection<object> injectedServices = new HashSet<object>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindsorAdapter"/> class.
@@ -41,6 +41,22 @@ namespace MvcExtensions.Windsor
         /// </summary>
         /// <value>The container.</value>
         public IWindsorContainer Container { get; private set; }
+
+        private static ICollection<object> InjectedServices
+        {
+            get
+            {
+                var context = HttpContext.Current;
+                if (context == null)
+                {
+                    return new HashSet<object>();
+                }
+                
+                ICollection<object> collection = (ICollection<object>)context.Items["InjectedServices"] ?? new List<object>();
+                context.Items["InjectedServices"] = collection;
+                return collection;
+            }
+        }
 
         /// <summary>
         /// Registers the type.
@@ -104,7 +120,7 @@ namespace MvcExtensions.Windsor
                     .Each(property =>
                               {
                                   var dependency = Container.Resolve(property.PropertyType);
-                                  injectedServices.Add(dependency);
+                                  InjectedServices.Add(dependency);
                                   property.SetValue(instance, dependency, null);
                               });
             }
@@ -132,9 +148,9 @@ namespace MvcExtensions.Windsor
 
         internal void ReleaseAllInjectedServices()
         {
-            foreach (var service in injectedServices.ToList())
+            foreach (var service in InjectedServices.ToList())
             {
-                injectedServices.Remove(service);
+                InjectedServices.Remove(service);
                 Container.Release(service);
             }
         }
