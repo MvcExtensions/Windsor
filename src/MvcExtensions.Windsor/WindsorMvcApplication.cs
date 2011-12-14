@@ -17,10 +17,11 @@ namespace MvcExtensions.Windsor
     public class WindsorMvcApplication : ExtendedMvcApplication
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="WindsorMvcApplication"/> class.
+        /// Executes custom initialization code after all event handler modules have been added.
         /// </summary>
-        public WindsorMvcApplication()
+        public override void Init()
         {
+            base.Init();
             new PerWebRequestLifestyleModule().Init(this);
             EndRequest += (sender, args) => ((WindsorAdapter)Adapter).ReleaseAllInjectedServices(); 
         }

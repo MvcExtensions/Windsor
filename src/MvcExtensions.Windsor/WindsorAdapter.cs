@@ -110,21 +110,12 @@ namespace MvcExtensions.Windsor
             }
         }
 
-        internal void ReleaseAllInjectedServices()
-        {
-            foreach (var service in injectedServices.ToList())
-            {
-                injectedServices.Remove(service);
-                Container.Release(service);
-            }
-        }
-
         /// <summary>
         /// Gets the service.
         /// </summary>
         /// <param name="serviceType">Type of the service.</param>
         /// <returns></returns>
-        protected override object DoGetService(Type serviceType)
+        public override object GetService(Type serviceType)
         {
             return Container.Kernel.HasComponent(serviceType) ? Container.Resolve(serviceType) : null;
         }
@@ -134,9 +125,18 @@ namespace MvcExtensions.Windsor
         /// </summary>
         /// <param name="serviceType">Type of the service.</param>
         /// <returns></returns>
-        protected override IEnumerable<object> DoGetServices(Type serviceType)
+        public override IEnumerable<object> GetServices(Type serviceType)
         {
             return Container.ResolveAll(serviceType).Cast<object>();
+        }
+
+        internal void ReleaseAllInjectedServices()
+        {
+            foreach (var service in injectedServices.ToList())
+            {
+                injectedServices.Remove(service);
+                Container.Release(service);
+            }
         }
 
         /// <summary>
