@@ -7,6 +7,7 @@
 
 namespace MvcExtensions.Windsor.Tests
 {
+    using Castle.MicroKernel;
     using Castle.Windsor;
 
     using Moq;
@@ -26,27 +27,27 @@ namespace MvcExtensions.Windsor.Tests
         }
 
         [Fact]
-        public void Should_be_able_to_load_modules()
+        public void Should_be_able_to_install_installer()
         {
             var buildManager = new Mock<IBuildManager>();
-            buildManager.SetupGet(bm => bm.ConcreteTypes).Returns(new[] { typeof(DummyModule) });
+            buildManager.SetupGet(bm => bm.ConcreteTypes).Returns(new[] { typeof(DummyInstaller) });
 
             var bootstrapper = new WindsorBootstrapper(buildManager.Object);
 
-            DummyModule.Loaded = false;
+            DummyInstaller.Installed = true;
 
             Assert.IsType<WindsorAdapter>(bootstrapper.ServiceLocator);
 
-            Assert.True(DummyModule.Loaded);
+            Assert.True(DummyInstaller.Installed);
         }
 
-        private sealed class DummyModule : IModule
+        private sealed class DummyInstaller : IWindsorInstaller
         {
-            public static bool Loaded { get; set; }
+            public static bool Installed { get; set; }
 
-            public void Load(IWindsorContainer container)
+            public void Install(IWindsorContainer container, IConfigurationStore store)
             {
-                Loaded = true;
+                Installed = true;
             }
         }
     }

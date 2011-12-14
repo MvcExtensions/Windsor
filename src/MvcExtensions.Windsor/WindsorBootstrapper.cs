@@ -14,17 +14,16 @@ namespace MvcExtensions.Windsor
     using Microsoft.Practices.ServiceLocation;
 
     using Castle.Windsor;
+    using Castle.MicroKernel.Registration;
     using Castle.MicroKernel.Resolvers.SpecializedResolvers;
-
-    using Component = Castle.MicroKernel.Registration.Component;
-    using FactorySupportFacility = Castle.Facilities.FactorySupport.FactorySupportFacility;
+    using Castle.Facilities.FactorySupport;
 
     /// <summary>
     /// Defines a <seealso cref="Bootstrapper">Bootstrapper</seealso> which is backed by <seealso cref="WindsorAdapter"/>.
     /// </summary>
     public class WindsorBootstrapper : Bootstrapper
     {
-        private static readonly Type moduleType = typeof(IModule);
+        private static readonly Type installerType = typeof(IWindsorInstaller);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindsorBootstrapper"/> class.
@@ -60,10 +59,10 @@ namespace MvcExtensions.Windsor
             IWindsorContainer container = ((WindsorAdapter)ServiceLocator).Container;
 
             BuildManager.ConcreteTypes
-                        .Where(type => moduleType.IsAssignableFrom(type) && type.HasDefaultConstructor())
+                        .Where(type => installerType.IsAssignableFrom(type) && type.HasDefaultConstructor())
                         .Select(type => Activator.CreateInstance(type))
-                        .Cast<IModule>()
-                        .Each(module => module.Load(container));
+                        .Cast<IWindsorInstaller>()
+                        .Each(installer => installer.Install(container, null));
         }
     }
 }

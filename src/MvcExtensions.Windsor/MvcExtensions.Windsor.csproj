@@ -96,7 +96,6 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="IModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WindsorBootstrapper.cs" />
     <Compile Include="WindsorMvcApplication.cs" />
