@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>MvcExtensions.Windsor</id>
+    <id>MvcExtensions.Windsor3</id>
     <version>0.0.0.0</version>
     <title>MvcExtensions.Windsor</title>
     <authors>Kazi Manzur Rashid, hazzik</authors>
@@ -9,7 +9,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>ASP.NET MVC Extensions is framework developed on top of ASP.NET MVC extensibility point, which allows your IoC Container to rule everywhere.</description>
     <dependencies>
-      <dependency id="Castle.Windsor" version="[2.5,3)" />
+      <dependency id="Castle.Core" version="[3,)" />
+      <dependency id="Castle.Windsor" version="[3,)" />
+      <dependency id="Castle.FactorySupportFacility" version="[3,)" />
       <dependency id="MvcExtensions" version="[2.5,3)" />
     </dependencies>
   </metadata>
