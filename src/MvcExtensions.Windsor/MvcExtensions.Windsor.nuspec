@@ -11,7 +11,7 @@
     <dependencies>
       <dependency id="Castle.Core" version="[2.5,3)" />
       <dependency id="Castle.Windsor" version="[2.5,3)" />
-      <dependency id="MvcExtensions" version="[2.5,3)" />
+      <dependency id="MvcExtensions" version="[2.5-a,3)" />
     </dependencies>
   </metadata>
   <files>
