@@ -75,7 +75,7 @@
       <HintPath>..\..\packages\Castle.Windsor.3.0.0.4001\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="MvcExtensions">
-      <HintPath>..\..\packages\MvcExtensions.2.5.0-rc1\lib\net40\MvcExtensions.dll</HintPath>
+      <HintPath>..\..\packages\MvcExtensions.2.5.0\lib\net40\MvcExtensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
