@@ -12,7 +12,8 @@
       <dependency id="Castle.Core" version="[3,)" />
       <dependency id="Castle.Windsor" version="[3,)" />
       <dependency id="Castle.FactorySupportFacility" version="[3,)" />
-      <dependency id="MvcExtensions" version="[2.5.0,3)" />
+      <dependency id="Microsoft.Web.Infrastructure" version="1.0.0.0" />
+      <dependency id="MvcExtensions" version="[3.0.0-a,3.1)" />
     </dependencies>
   </metadata>
   <files>
