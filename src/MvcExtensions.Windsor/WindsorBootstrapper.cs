@@ -42,7 +42,7 @@ namespace MvcExtensions.Windsor
         public static void Run()
         {
             Current = new WindsorBootstrapper(BuildManagerWrapper.Current, BootstrapperTasksRegistry.Current, PerRequestTasksRegistry.Current);
-            DynamicModuleUtility.RegisterModule(typeof(Module));
+            DynamicModuleUtility.RegisterModule(typeof(BootstrapperModule));
             DynamicModuleUtility.RegisterModule(typeof(PerWebRequestLifestyleModule));
             DynamicModuleUtility.RegisterModule(typeof(ReleaseInjectedServicesModule));
         }
